@@ -1,0 +1,76 @@
+#include "widget.h"
+#include "ui_widget.h"
+#include <QGraphicsDropShadowEffect>
+
+// 给 QLabel 添加阴影效果
+void addShadowToLabel(QLabel *label) {
+    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(label);
+    shadowEffect->setBlurRadius(10);           // 阴影模糊半径
+    shadowEffect->setOffset(3, 3);             // 阴影偏移量
+    shadowEffect->setColor(QColor(0, 0, 0, 80)); // 阴影颜色（黑色，带透明度）
+
+    label->setGraphicsEffect(shadowEffect);    // 设置阴影效果
+}
+Widget::Widget(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::Widget)
+{
+    ui->setupUi(this);
+    ui->label->setText("上相机");
+    ui->label->setFixedSize(200,30);
+    addShadowToLabel( ui->label);
+    ui->label->setStyleSheet(
+            "QLabel {"
+            "   font-family: Arial, sans-serif;"
+            "   font-size: 16px;"
+            "   color: #333333;"
+            "   background-color: #41cd52;"
+            "   border: 1px solid black;"
+            "   border-radius: 7px;"
+            "   padding: 5px 10px;"
+            "}"
+        );
+
+        // 创建计时器
+        QTimer *timer = new QTimer();
+        bool tt = true;
+        QObject::connect(timer, &QTimer::timeout, [this,&tt]() {
+            // 判断当前样式是否是初始样式，切换样式
+            if (tt) {
+                ui->label->setStyleSheet(
+                            "QLabel {"
+                            "   font-family: Arial, sans-serif;"
+                            "   font-size: 16px;"
+                            "   color: black;"
+                            "   background-color: #ffffbf;"
+                            "   border: 1px solid black;"
+                            "   border-radius: 7px;"
+                            "   padding: 5px 10px;"
+                            "}"
+                );
+                tt = false;
+            } else {
+                ui->label->setStyleSheet(
+                    "QLabel {"
+                    "   font-family: Arial, sans-serif;"
+                    "   font-size: 16px;"
+                    "   color: #333333;"
+                    "   background-color: #41cd52;"
+                    "   border: 1px solid black;"
+                    "   border-radius: 7px;"
+                    "   padding: 5px 10px;"
+                    "}"
+                );
+                tt = true;
+            }
+        });
+
+        // 设置计时器每3秒触发一次
+        timer->start(1000);
+}
+
+Widget::~Widget()
+{
+    delete ui;
+}
+
